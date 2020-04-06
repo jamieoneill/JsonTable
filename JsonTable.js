@@ -37,7 +37,15 @@
     if (settings.dataURL) {
       getData();
     } else {
-      setTableData(settings.data);
+      var tempArray = [];
+      if (Array.isArray(settings.data)) {
+        tempArray = settings.data;
+      } else {
+        tempArray.push(settings.data);
+      }
+      allData = tempArray
+      
+      setTableData(allData);
     }
 
     function getData() {
