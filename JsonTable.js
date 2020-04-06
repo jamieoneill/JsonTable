@@ -64,7 +64,7 @@
           }
  
           var tempArray = [];
-          if (Array.prototype.isArray(allData)) {
+          if (Array.isArray(allData)) {
             tempArray = allData;
           } else {
             tempArray.push(allData);
@@ -205,7 +205,7 @@
       function recurse(cur, prop) {
         if (Object(cur) !== cur) {
           result[prop] = cur;
-        } else if (Array.prototype.isArray(cur)) {
+        } else if (Array.isArray(cur)) {
           for (var i = 0, l = cur.length; i < l; i++)
             recurse(cur[i], prop ? prop + "." + i : "" + i);
           // recurse(cur[i], prop ? prop+"" : "");
@@ -635,7 +635,7 @@
             for (const key in element) {
               values = [];
 
-              if (Array.prototype.isArray(element[key])) {
+              if (Array.isArray(element[key])) {
                 //array
                 //inner object
                 if (typeof element[key][0] === "object") {
@@ -654,7 +654,7 @@
                 //object
                 Object.entries(element[key]).forEach(innerElement => {
                   //inner array
-                  if (Array.prototype.isArray(innerElement[1])) {
+                  if (Array.isArray(innerElement[1])) {
                     //inner array will have objects
                     innerElement[1].forEach(arrayValue => {
                       Object.entries(arrayValue).forEach(finalObject => {
