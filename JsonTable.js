@@ -50,11 +50,17 @@
         .then(function(data) {
           if(settings.responseField){
             //for git data
-            content = data[settings.responseField].replace(/\s/g, "");
-            allData = JSON.parse(atob(content));
-            gitSha = data.sha;
+            content = data[settings.responseField];
+
+            if(settings.dataURL.includes("github")){
+              allData = JSON.parse(atob(content));
+              gitSha = data.sha;
+            }else{
+              allData = content;
+            }
+
           }else{
-            allData = JSON.parse(data);
+            allData = data;
           }
           setTableData(allData);
         })
