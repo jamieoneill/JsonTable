@@ -399,7 +399,7 @@
     $("#jsonTable").on("click", "tbody tr", function() {
       rowID = $(this)[0].id.replace("row-", "");
 
-      if(settings.dataURL.includes("github")){
+      if(settings.dataURL && settings.dataURL.includes("github")){
         showUploadButton = true
       }else{
         showUploadButton = false
