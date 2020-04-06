@@ -383,12 +383,19 @@
     $("#jsonTable").on("click", "tbody tr", function() {
       rowID = $(this)[0].id.replace("row-", "");
 
+      if(settings.dataURL.includes("github")){
+        showUploadButton = true
+      }else{
+        showUploadButton = false
+      }
+
       (async () => {
         const { value: formValues } = await Swal.fire({
-          title: "<strong>Project Details</strong>",
+          title: "<strong>Details</strong>",
           html: makeDetailTable(rowID),
           width: "70%",
           showCancelButton: true,
+          showConfirmButton: showUploadButton,
           confirmButtonColor: "#3085d6",
           confirmButtonText: "Update",
           cancelButtonColor: "#d33",
@@ -568,14 +575,22 @@
         data: commitData
       })
         .then(function(data) {
-          Swal.fire("Success", "Project data added", "success");
+          Swal.fire("Success", "data uploaded", "success");
         })
         .catch(function(error) {
+          if(!settings.token){
+            Swal.fire(
+              "Error",
+              "No git token has been set",
+              "error"
+            );
+          }else{
           Swal.fire(
             "Error",
             "Something went wrong. view console for more details",
             "error"
           );
+        }
           console.error(error);
         });
     }
