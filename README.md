@@ -27,9 +27,8 @@ $('#JsonTableHolder').JsonTable({
 *Requires JQuery.
 
 # Example
-View Fiddle:
-
-https://jsfiddle.net/5n4r9cx8/1/
+1. https://jsfiddle.net/5n4r9cx8/ - API data
+1. https://jsfiddle.net/4z1kuygo/ - Passed in data
 
 # Options
 
