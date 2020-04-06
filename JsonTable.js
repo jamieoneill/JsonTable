@@ -49,9 +49,9 @@
       })
         .then(function(data) {
           if(settings.responseField){
-            //for git data
             content = data[settings.responseField];
 
+            //for git data
             if(settings.dataURL.includes("github")){
               allData = JSON.parse(atob(content));
               gitSha = data.sha;
@@ -62,6 +62,15 @@
           }else{
             allData = data;
           }
+ 
+          var tempArray = [];
+          if (Array.prototype.isArray(allData)) {
+            tempArray = allData;
+          } else {
+            tempArray.push(allData);
+          }
+          allData = tempArray
+
           setTableData(allData);
         })
         .catch(function(error) {
@@ -105,16 +114,9 @@
         $("#jsonTable tr").remove();
       }
 
-      var tempArray = [];
-      if (Array.isArray(json)) {
-        tempArray = json;
-      } else {
-        tempArray.push(json);
-      }
-
       // headers
       var row = "<tr>";
-      Object.keys(tempArray[0]).forEach(function(header, i) {
+      Object.keys(json[0]).forEach(function(header, i) {
         columns.push(header);
 
         if ($.inArray(header, settings.colsToHide) != -1) {
@@ -132,7 +134,7 @@
       $("#jsonTable thead").append(row);
 
       // rows
-      tempArray.forEach(function(project, rowIndex) {
+      json.forEach(function(project, rowIndex) {
         var row = '<tr id="row-' + rowIndex + '">';
 
         for (const [i, [key, value]] of Object.entries(
@@ -203,7 +205,7 @@
       function recurse(cur, prop) {
         if (Object(cur) !== cur) {
           result[prop] = cur;
-        } else if (Array.isArray(cur)) {
+        } else if (Array.prototype.isArray(cur)) {
           for (var i = 0, l = cur.length; i < l; i++)
             recurse(cur[i], prop ? prop + "." + i : "" + i);
           // recurse(cur[i], prop ? prop+"" : "");
@@ -433,6 +435,7 @@
     });
 
     function makeDetailTable(rowID) {
+
       newTable = '<table id="tempTable" class="table table-bordered"> <tbody>';
       flattenedValue = flatten(allData[rowID]);
 
@@ -632,7 +635,7 @@
             for (const key in element) {
               values = [];
 
-              if (Array.isArray(element[key])) {
+              if (Array.prototype.isArray(element[key])) {
                 //array
                 //inner object
                 if (typeof element[key][0] === "object") {
@@ -651,7 +654,7 @@
                 //object
                 Object.entries(element[key]).forEach(innerElement => {
                   //inner array
-                  if (Array.isArray(innerElement[1])) {
+                  if (Array.prototype.isArray(innerElement[1])) {
                     //inner array will have objects
                     innerElement[1].forEach(arrayValue => {
                       Object.entries(arrayValue).forEach(finalObject => {
