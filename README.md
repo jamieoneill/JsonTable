@@ -4,6 +4,11 @@ create table with filter options easily.
 # CDN
 https://cdn.jsdelivr.net/gh/jamieoneill/JsonTable/JsonTable.js
 
+Or minified 
+
+https://cdn.jsdelivr.net/gh/jamieoneill/JsonTable/JsonTable.min.js
+
+
 # Usage
 apply `.JsonTable` to a div.
 
