@@ -400,45 +400,54 @@
       rowID = $(this)[0].id.replace("row-", "");
 
       if(settings.dataURL && settings.dataURL.includes("github")){
-        showUploadButton = true
+        showUploadButton = true;
+        showDeleteButton = true;
       }else{
-        showUploadButton = false
+        showUploadButton = false;
+        showDeleteButton = false;
       }
 
       (async () => {
-        const { value: formValues } = await Swal.fire({
+        Swal.fire({
           title: "<strong>Details</strong>",
           html: makeDetailTable(rowID),
           width: "70%",
-          showCancelButton: true,
+          showCancelButton: showDeleteButton,
           showConfirmButton: showUploadButton,
+          showCloseButton: true,
           confirmButtonColor: "#3085d6",
           confirmButtonText: "Update",
           cancelButtonColor: "#d33",
-          cancelButtonText: "Close",
+          cancelButtonText: "Delete",
           focusConfirm: false,
           preConfirm: () => {
             return [$(".updateProject" + rowID)];
           }
+        }).then((result) => {
+          
+          if (result.dismiss === Swal.DismissReason.cancel) {
+            //delete data
+            allData.splice(rowID, 1);
+            uploadToGit(allData);
+            setTableData(allData);
+          }else if(result.value){
+            //update data
+            updatedProject = {};
+            //add updated values to new object
+            result.value[0].each(function() {
+              array = $(this)
+                .attr("keyName")
+                .split(".");
+              assign(updatedProject, array, $(this).val());
+            });
+  
+            //replace project with updated
+            allData[rowID] = updatedProject;
+            uploadToGit(allData);
+            setTableData(allData);
+          }
         });
 
-        if (formValues) {
-          updatedProject = {};
-
-          //add updated values to new object
-          formValues[0].each(function() {
-            array = $(this)
-              .attr("keyName")
-              .split(".");
-            assign(updatedProject, array, $(this).val());
-          });
-
-          //replace project with updated
-          allData[rowID] = updatedProject;
-
-          uploadToGit(allData);
-          setTableData(allData);
-        }
       })();
     });
 
@@ -592,7 +601,7 @@
         data: commitData
       })
         .then(function(data) {
-          Swal.fire("Success", "data uploaded", "success");
+          Swal.fire("Success", "data updated", "success");
         })
         .catch(function(error) {
           if(!settings.token){
