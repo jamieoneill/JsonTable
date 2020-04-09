@@ -48,6 +48,11 @@ th:first-letter {
   background-color: #e6e6e6;
   border-color: #adadad;
 }
+.multiselect-clear-filter {
+  border: none; 
+  border-width: 0; 
+  box-shadow: none;
+}
 .glyphicon {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
