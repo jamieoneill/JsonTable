@@ -10,6 +10,13 @@
 
     //script
     await $.getScript("https://cdn.jsdelivr.net/npm/sweetalert2@9");
+    var settings = $.extend(
+      {
+        DivID: "#" + $(this)[0].id,
+        colsToHide: []
+      },
+      options
+    );
     showLoading();
     await $.getScript("https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js");
     await $.getScript("https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js");
@@ -19,13 +26,6 @@
     await $.getScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js");
     await $.getScript("https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js");
 
-    var settings = $.extend(
-      {
-        DivID: "#" + $(this)[0].id,
-        colsToHide: [],
-      },
-      options
-    );
     await createTableLayout();
 
     var allData;
@@ -566,7 +566,7 @@
       Swal.fire({
         title: "Fetching data",
         timerProgressBar: true,
-        target: document.querySelector('#JsonTableHolder'),
+        target: document.querySelector(settings.DivID),
         onBeforeOpen: () => {
           Swal.showLoading();
           Swal.getContainer().style.position = 'absolute';
