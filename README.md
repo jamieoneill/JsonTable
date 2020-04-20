@@ -24,6 +24,12 @@ $('#JsonTableHolder').JsonTable({
 });
 ```
 
+Set the div's position to relative to keep the loading window within the div otherwise loading will cover the entire body
+
+```html
+<div id="JsonTableHolder" style="position: relative; height: 300px; "></div>
+```
+
 *Requires JQuery.
 
 # Example
