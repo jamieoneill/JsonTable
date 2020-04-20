@@ -1,5 +1,5 @@
-(function($) {
-  $.fn.JsonTable = async function(options) {
+(function ($) {
+  $.fn.JsonTable = async function (options) {
     // style
     $("head").append('<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">');
     $("head").append('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css">');
@@ -10,6 +10,13 @@
 
     //script
     await $.getScript("https://cdn.jsdelivr.net/npm/sweetalert2@9");
+    var settings = $.extend(
+      {
+        DivID: "#" + $(this)[0].id,
+        colsToHide: []
+      },
+      options
+    );
     showLoading();
     await $.getScript("https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js");
     await $.getScript("https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js");
@@ -19,13 +26,6 @@
     await $.getScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js");
     await $.getScript("https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js");
 
-    var settings = $.extend(
-      {
-        DivID: "#" + $(this)[0].id,
-        colsToHide: []
-      },
-      options
-    );
     await createTableLayout();
 
     var allData;
@@ -43,8 +43,8 @@
       } else {
         tempArray.push(settings.data);
       }
-      allData = tempArray
-      
+      allData = tempArray;
+
       setTableData(allData);
     }
 
@@ -52,36 +52,35 @@
       $.ajax(settings.dataURL, {
         method: "GET",
         headers: {
-          authorization: settings.token
-        }
+          authorization: settings.token,
+        },
       })
-        .then(function(data) {
-          if(settings.responseField){
+        .then(function (data) {
+          if (settings.responseField) {
             content = data[settings.responseField];
 
             //for git data
-            if(settings.dataURL.includes("github")){
+            if (settings.dataURL.includes("github")) {
               allData = JSON.parse(atob(content));
               gitSha = data.sha;
-            }else{
+            } else {
               allData = content;
             }
-
-          }else{
+          } else {
             allData = data;
           }
- 
+
           var tempArray = [];
           if (Array.isArray(allData)) {
             tempArray = allData;
           } else {
             tempArray.push(allData);
           }
-          allData = tempArray
+          allData = tempArray;
 
           setTableData(allData);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error(error);
         });
     }
@@ -124,7 +123,7 @@
 
       // headers
       var row = "<tr>";
-      Object.keys(json[0]).forEach(function(header, i) {
+      Object.keys(json[0]).forEach(function (header, i) {
         columns.push(header);
 
         if ($.inArray(header, settings.colsToHide) != -1) {
@@ -142,40 +141,60 @@
       $("#jsonTable thead").append(row);
 
       // rows
-      json.forEach(function(project, rowIndex) {
+      json.forEach(function (project, rowIndex) {
         var row = '<tr id="row-' + rowIndex + '">';
 
-        for (const [i, [key, value]] of Object.entries(
+        for (const [col, [key, value]] of Object.entries(
           Object.entries(project)
         )) {
           flattenedValue = flatten(value);
 
           if (Object.keys(flattenedValue).length > 1) {
             if ($.inArray(key, settings.colsToHide) != -1) {
-              row += '<td class="Col-' + i + '"  style="display:none">';
+              row += '<td class="Col-' + col + '"  style="display:none">';
             } else {
-              row += '<td class="Col-' + i + '">';
+              row += '<td class="Col-' + col + '">';
             }
 
+            //multiple entries in td, add dropdown
+            var first = true;
             for (const key in flattenedValue) {
               if (flattenedValue.hasOwnProperty(key)) {
-                //row += ''+ key + ": " +  flattenedValue[key] +'<hr>';
-                row += flattenedValue[key] + ' <hr class="small">';
+                if (first) {
+                  if (flattenedValue[key] != "") {
+                    first = false;
+                    row +=
+                      flattenedValue[key] +
+                      ' <label class="btn" data-toggle="collapse" data-target="#accordion' +
+                      rowIndex +
+                      col +
+                      '"><span class="dropdown-icon"></span></label>';
+                  }
+                } else {
+                  row +=
+                    '<span id="accordion' +
+                    rowIndex +
+                    col +
+                    '" class="collapse">' +
+                    flattenedValue[key] +
+                    ' </span><hr class="small">';
+                }
               }
             }
+
             row += "</td>";
           } else {
             if ($.inArray(key, settings.colsToHide) != -1) {
               row +=
                 '<td class="Col-' +
-                i +
+                col +
                 '" style="display:none">' +
                 Object.values(flattenedValue)[0] +
                 "</td>";
             } else {
               row +=
                 '<td class="Col-' +
-                i +
+                col +
                 '">' +
                 Object.values(flattenedValue)[0] +
                 "</td>";
@@ -198,10 +217,10 @@
             text: "Export",
             className: "btn",
             exportOptions: {
-              columns: ":visible"
-            }
-          }
-        ]
+              columns: ":visible",
+            },
+          },
+        ],
       });
 
       setDisplayCols();
@@ -232,7 +251,7 @@
       return result;
     }
 
-    $("#clearFilters").click(function() {
+    $("#clearFilters").click(function () {
       var myNode = document.getElementById("filtHolder");
       while (myNode.firstChild) {
         myNode.removeChild(myNode.lastChild);
@@ -242,7 +261,7 @@
       $("jsonTable tbody tr").show();
     });
 
-    $("#addFilter").click(function() {
+    $("#addFilter").click(function () {
       var newID = Math.floor(Math.random() * 10000);
 
       var div = document.createElement("div");
@@ -295,7 +314,7 @@
       var selectList2 = document.createElement("select");
       selectList2.setAttribute("multiple", "multiple");
       selectList2.id = "options-" + newID;
-      $.each(allData, function(i, innerData) {
+      $.each(allData, function (i, innerData) {
         var option = document.createElement("option");
         option.value = Object.values(innerData)[0];
         option.text = Object.values(innerData)[0];
@@ -318,21 +337,21 @@
         templates: {
           li:
             '<li class="dropdown-item"><a><label class="m-0 pl-2 pr-0"></label></a></li>',
-          ul: '<ul class="multiselect-container dropdown-menu p-1 m-0"></ul>'
+          ul: '<ul class="multiselect-container dropdown-menu p-1 m-0"></ul>',
         },
-        onChange: function(option, checked) {
+        onChange: function (option, checked) {
           var filterValues = [];
-          $("#options-" + newID + " option:selected").each(function() {
+          $("#options-" + newID + " option:selected").each(function () {
             filterValues.push($(this).val());
           });
 
           thisFilter = {
             col: selectList1.value,
             values: filterValues,
-            query: selectList0.value
+            query: selectList0.value,
           };
           setActiveFilters(thisFilter);
-        }
+        },
       });
 
       refreshChange();
@@ -342,7 +361,7 @@
       $("#jsonTable tbody tr").hide();
 
       //check if existing filter has been updated
-      activeFilters.forEach(function(element, i) {
+      activeFilters.forEach(function (element, i) {
         if (element.col === newFilter.col) {
           activeFilters.splice(i, 1);
         }
@@ -350,17 +369,17 @@
 
       activeFilters.push(newFilter);
 
-      $("#jsonTable tbody tr").each(function() {
+      $("#jsonTable tbody tr").each(function () {
         row = $(this);
-        activeFilters.forEach(function(element, i) {
+        activeFilters.forEach(function (element, i) {
           if (element.values.length == 0) {
             activeFilters.splice(i, 1);
           } else {
             td = row.find("td.Col-" + element.col)[0];
 
             if (element.query == "OR") {
-              if (td.innerHTML.includes('<hr class="small">')) {
-                found = element.values.some(r =>
+              if (td.innerHTML.includes("<span")) {
+                found = element.values.some((r) =>
                   td.textContent.split(" ").includes(r)
                 );
               } else {
@@ -373,8 +392,8 @@
             } else if (element.query == "AND") {
               //only run and query on visible rows
               if (row.is(":visible")) {
-                if (td.innerHTML.includes('<hr class="small">')) {
-                  found = element.values.some(r =>
+                if (td.innerHTML.includes("<span")) {
+                  found = element.values.some((r) =>
                     td.textContent.split(" ").includes(r)
                   );
                 } else {
@@ -396,63 +415,60 @@
       }
     }
 
-    $("#jsonTable").on("click", "tbody tr", function() {
-      rowID = $(this)[0].id.replace("row-", "");
+    $("#jsonTable").on("click", "tbody tr", function (e) {
+      if (e.target.tagName == "TD") {
+        rowID = $(this)[0].id.replace("row-", "");
 
-      if(settings.dataURL && settings.dataURL.includes("github")){
-        showUploadButton = true;
-        showDeleteButton = true;
-      }else{
-        showUploadButton = false;
-        showDeleteButton = false;
+        if (settings.dataURL && settings.dataURL.includes("github")) {
+          showUploadButton = true;
+          showDeleteButton = true;
+        } else {
+          showUploadButton = false;
+          showDeleteButton = false;
+        }
+
+        (async () => {
+          Swal.fire({
+            title: "<strong>Details</strong>",
+            html: makeDetailTable(rowID),
+            width: "70%",
+            showCancelButton: showDeleteButton,
+            showConfirmButton: showUploadButton,
+            showCloseButton: true,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Update",
+            cancelButtonColor: "#d33",
+            cancelButtonText: "Delete",
+            focusConfirm: false,
+            preConfirm: () => {
+              return [$(".updateProject" + rowID)];
+            },
+          }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel) {
+              //delete data
+              allData.splice(rowID, 1);
+              uploadToGit(allData);
+              setTableData(allData);
+            } else if (result.value) {
+              //update data
+              updatedProject = {};
+              //add updated values to new object
+              result.value[0].each(function () {
+                array = $(this).attr("keyName").split(".");
+                assign(updatedProject, array, $(this).val());
+              });
+
+              //replace project with updated
+              allData[rowID] = updatedProject;
+              uploadToGit(allData);
+              setTableData(allData);
+            }
+          });
+        })();
       }
-
-      (async () => {
-        Swal.fire({
-          title: "<strong>Details</strong>",
-          html: makeDetailTable(rowID),
-          width: "70%",
-          showCancelButton: showDeleteButton,
-          showConfirmButton: showUploadButton,
-          showCloseButton: true,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Update",
-          cancelButtonColor: "#d33",
-          cancelButtonText: "Delete",
-          focusConfirm: false,
-          preConfirm: () => {
-            return [$(".updateProject" + rowID)];
-          }
-        }).then((result) => {
-          
-          if (result.dismiss === Swal.DismissReason.cancel) {
-            //delete data
-            allData.splice(rowID, 1);
-            uploadToGit(allData);
-            setTableData(allData);
-          }else if(result.value){
-            //update data
-            updatedProject = {};
-            //add updated values to new object
-            result.value[0].each(function() {
-              array = $(this)
-                .attr("keyName")
-                .split(".");
-              assign(updatedProject, array, $(this).val());
-            });
-  
-            //replace project with updated
-            allData[rowID] = updatedProject;
-            uploadToGit(allData);
-            setTableData(allData);
-          }
-        });
-
-      })();
     });
 
     function makeDetailTable(rowID) {
-
       newTable = '<table id="tempTable" class="table table-bordered"> <tbody>';
       flattenedValue = flatten(allData[rowID]);
 
@@ -476,12 +492,12 @@
     }
 
     function refreshChange() {
-      $("*[id*=filter]").change(function() {
+      $("*[id*=filter]").change(function () {
         optionsID = $(this)[0].id.replace("filter", "options");
         optionsCategory = parseInt($(this).val());
         newValues = [];
 
-        $.each(allData, function(i, innerData) {
+        $.each(allData, function (i, innerData) {
           thisValue = Object.values(innerData)[optionsCategory];
 
           if (newValues.indexOf(thisValue) === -1) {
@@ -524,10 +540,10 @@
       $("#colSelector").multiselect({
         templates: {
           li:
-            '<li class="dropdown-item"><a><label class="m-0 pl-2 pr-0"></label></a></li>',
-          ul: '<ul class="multiselect-container dropdown-menu p-1 m-0"></ul>'
+            '<li class="dropdown-item"><a><label style="margin:100px" class="m-0 pl-2 pr-0"></label></a></li>',
+          ul: '<ul class="multiselect-container dropdown-menu p-1 m-0"></ul>',
         },
-        onChange: function(option, show) {
+        onChange: function (option, show) {
           colID = option[0].value;
 
           var items = document.getElementsByClassName("Col-" + colID);
@@ -538,7 +554,7 @@
               $(items[i]).hide();
             }
           }
-        }
+        },
       });
 
       //add class for search box
@@ -550,11 +566,13 @@
       Swal.fire({
         title: "Fetching data",
         timerProgressBar: true,
+        target: document.querySelector(settings.DivID),
         onBeforeOpen: () => {
           Swal.showLoading();
+          Swal.getContainer().style.position = 'absolute';
         },
-        allowOutsideClick: false
-      }).then(result => {});
+        allowOutsideClick: false,
+      }).then((result) => {});
     }
 
     function closeLoading(reason) {
@@ -595,39 +613,35 @@
       $.ajax({
         url: settings.dataURL,
         type: "PUT",
-        beforeSend: function(xhr) {
+        beforeSend: function (xhr) {
           xhr.setRequestHeader("Authorization", settings.token);
         },
-        data: commitData
+        data: commitData,
       })
-        .then(function(data) {
+        .then(function (data) {
           Swal.fire("Success", "data updated", "success");
         })
-        .catch(function(error) {
-          if(!settings.token){
+        .catch(function (error) {
+          if (!settings.token) {
+            Swal.fire("Error", "No git token has been set", "error");
+          } else {
             Swal.fire(
               "Error",
-              "No git token has been set",
+              "Something went wrong. view console for more details",
               "error"
             );
-          }else{
-          Swal.fire(
-            "Error",
-            "Something went wrong. view console for more details",
-            "error"
-          );
-        }
+          }
           console.error(error);
         });
     }
 
-    (function($) {
+    (function ($) {
       // Populates a select drop-down with options in a list
-      $.fn.populate = function(list) {
+      $.fn.populate = function (list) {
         var hasObject = false;
 
         //check if nested object
-        list.forEach(element => {
+        list.forEach((element) => {
           if (typeof element === "object") {
             hasObject = true;
           }
@@ -635,7 +649,7 @@
 
         if (hasObject) {
           //add groups
-          Object.keys(list[0]).forEach(element => {
+          Object.keys(list[0]).forEach((element) => {
             return this.append(
               $(
                 '<optgroup name="' +
@@ -648,7 +662,7 @@
             );
           });
 
-          list.forEach(element => {
+          list.forEach((element) => {
             for (const key in element) {
               values = [];
 
@@ -656,7 +670,7 @@
                 //array
                 //inner object
                 if (typeof element[key][0] === "object") {
-                  Object.entries(element[key][0]).forEach(innerElement => {
+                  Object.entries(element[key][0]).forEach((innerElement) => {
                     createOptions(
                       [innerElement[1]],
                       key + "-" + innerElement[0],
@@ -669,12 +683,12 @@
                 }
               } else if (typeof element[key] === "object") {
                 //object
-                Object.entries(element[key]).forEach(innerElement => {
+                Object.entries(element[key]).forEach((innerElement) => {
                   //inner array
                   if (Array.isArray(innerElement[1])) {
                     //inner array will have objects
-                    innerElement[1].forEach(arrayValue => {
-                      Object.entries(arrayValue).forEach(finalObject => {
+                    innerElement[1].forEach((arrayValue) => {
+                      Object.entries(arrayValue).forEach((finalObject) => {
                         createOptions(
                           [finalObject[1]],
                           innerElement[0] + "-" + finalObject[0],
@@ -684,11 +698,22 @@
                     });
                   } else {
                     //inner object
-                    createOptions([innerElement[1]], innerElement[0], this);
+                    if (typeof innerElement[1] === "object") {
+                      Object.entries(innerElement[1]).forEach((finalObject) => {
+                        createOptions(
+                          [finalObject[1]],
+                          innerElement[0] + "-" + finalObject[0],
+                          this
+                        );
+                      });
+                    } else {
+                      //single string
+                      createOptions([innerElement[1]], innerElement[0], this);
+                    }
                   }
                 });
               } else {
-                //single sting
+                //single string
                 createOptions([element[key].toString()], key, this);
               }
             }
@@ -696,17 +721,17 @@
         } else {
           //add plain option
           return this.append(
-            list.map(item =>
+            list.map((item) =>
               $("<option>", {
                 text: item,
-                value: item
+                value: item,
               })
             )
           );
         }
 
         //remove empty groups
-        $("optgroup").each(function() {
+        $("optgroup").each(function () {
           if ($(this).children().length == 0) {
             $(this).remove();
           }
@@ -714,14 +739,10 @@
       };
 
       function createOptions(values, label, div) {
-        values.forEach(value => {
+        values.forEach((value) => {
           var duplicate = false;
 
           if (value != "") {
-            //  if(label.match(/^\d/)){
-            //      label  = label.substring(2);
-            //  }
-
             //create group for sub options
             if (
               $('optgroup[name="' + div[0].id + "" + label + '"]').length == 0
@@ -747,13 +768,13 @@
               $('optgroup[name="' + div[0].id + "" + label + '"]').append(
                 $("<option>", {
                   text: value,
-                  value: value
+                  value: value,
                 })
               );
             } else {
               //check for duplicate options
               $('optgroup[name="' + div[0].id + "" + label + '"] option').each(
-                function() {
+                function () {
                   if ($(this).val() == value) {
                     duplicate = true;
                   }
@@ -765,7 +786,7 @@
                 $('optgroup[name="' + div[0].id + "" + label + '"').append(
                   $("<option>", {
                     text: value,
-                    value: value
+                    value: value,
                   })
                 );
               }
