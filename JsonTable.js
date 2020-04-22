@@ -7,7 +7,7 @@
     $("head").append('<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.6.1/css/buttons.dataTables.min.css"/>');
     $("head").append('<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">');
     $("head").append('<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jamieoneill/JsonTable/style.css">');
-
+    
     //script
     await $.getScript("https://cdn.jsdelivr.net/npm/sweetalert2@9");
     var settings = $.extend(
@@ -18,6 +18,7 @@
       options
     );
     showLoading();
+    
     await $.getScript("https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js");
     await $.getScript("https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js");
     await $.getScript("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.js");
@@ -112,6 +113,7 @@
     </div>`;
 
       $(settings.DivID).append(layout);
+      $(settings.DivID).addClass("json-table-holder")
     }
 
     function setTableData(json) {
