@@ -132,11 +132,11 @@
           row +=
             '<th style="display:none" class="Col-' +
             i +
-            '">' +
+            '"> <span>' +
             header +
-            "</th>";
+            "</span></th>";
         } else {
-          row += '<th class="Col-' + i + '">' + header + "</th>";
+          row += '<th class="Col-' + i + '"><span>' + header + "</span></th>";
         }
       });
       row += "</tr>";
@@ -167,17 +167,17 @@
                     first = false;
                     row +=
                       flattenedValue[key] +
-                      ' <label class="btn" data-toggle="collapse" data-target="#accordion' +
+                      ' <label class="btn" data-toggle="collapse" data-target=".multi-collapse' +
                       rowIndex +
                       col +
                       '"><span class="dropdown-icon"></span></label>';
                   }
                 } else {
                   row +=
-                    '<span id="accordion' +
+                    '<span class="multi-collapse' +
                     rowIndex +
                     col +
-                    '" class="collapse">' +
+                    ' collapse">' +
                     flattenedValue[key] +
                     ' </span><hr class="small">';
                 }
@@ -336,11 +336,6 @@
         resetText: "Clear",
         buttonWidth: "400px",
         buttonContainer: '<div class="dropdown" />',
-        templates: {
-          li:
-            '<li class="dropdown-item"><a><label class="m-0 pl-2 pr-0"></label></a></li>',
-          ul: '<ul class="multiselect-container dropdown-menu p-1 m-0"></ul>',
-        },
         onChange: function (option, checked) {
           var filterValues = [];
           $("#options-" + newID + " option:selected").each(function () {
@@ -540,11 +535,6 @@
       $("#jsonTable_filter").prepend(label);
 
       $("#colSelector").multiselect({
-        templates: {
-          li:
-            '<li class="dropdown-item"><a><label style="margin:100px" class="m-0 pl-2 pr-0"></label></a></li>',
-          ul: '<ul class="multiselect-container dropdown-menu p-1 m-0"></ul>',
-        },
         onChange: function (option, show) {
           colID = option[0].value;
 
