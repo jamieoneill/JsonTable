@@ -10,12 +10,6 @@
 .json-table-holder td {
   word-wrap: break-word;
 }
-.json-table-holder th,
-.json-table-holder td {
-  border-style: solid;
-  border-width: 5px;
-  border-color: #bcbcbc;
-}
 .json-table-holder th span {
   display: block;
 }
