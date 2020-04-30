@@ -179,7 +179,7 @@
                     col +
                     ' collapse">' +
                     flattenedValue[key] +
-                    ' </span><br>';
+                    ' </span><hr class="small">';
                 }
               }
             }
@@ -206,7 +206,7 @@
                 '<td class="Col-' +
                 col +
                 '"></td>"';
-              }y
+              }
             }
           }
         }
