@@ -163,14 +163,14 @@
             for (const key in flattenedValue) {
               if (flattenedValue.hasOwnProperty(key)) {
                 if (first) {
-                  if (flattenedValue[key] != "") {
+                  if (flattenedValue[key].toString() != "") {
                     first = false;
                     row +=
                       flattenedValue[key] +
                       ' <label class="btn" data-toggle="collapse" data-target=".multi-collapse' +
                       rowIndex +
                       col +
-                      '"><span class="dropdown-icon"></span></label>';
+                      '"><span class="dropdown-icon"></span></label><br>';
                   }
                 } else {
                   row +=
@@ -194,12 +194,19 @@
                 Object.values(flattenedValue)[0] +
                 "</td>";
             } else {
-              row +=
+              if(typeof( Object.values(flattenedValue)[0]) == "string" ){
+                row +=
+                  '<td class="Col-' +
+                  col +
+                  '">' +
+                  Object.values(flattenedValue)[0] +
+                  "</td>";
+              }else{
+                row +=
                 '<td class="Col-' +
                 col +
-                '">' +
-                Object.values(flattenedValue)[0] +
-                "</td>";
+                '"></td>"';
+              }
             }
           }
         }
