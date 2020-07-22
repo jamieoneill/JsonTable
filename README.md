@@ -33,7 +33,7 @@ Set the div's position to relative to keep the loading window within the div oth
 *Requires JQuery.
 
 # Example
-1. https://jsfiddle.net/5n4r9cx8/ - API data
+1. https://jsfiddle.net/zLqu3yx0/ - API data
 1. https://jsfiddle.net/4z1kuygo/ - Passed in data
 
 # Options
