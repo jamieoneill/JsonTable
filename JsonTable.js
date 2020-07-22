@@ -163,7 +163,7 @@
             for (const key in flattenedValue) {
               if (flattenedValue.hasOwnProperty(key)) {
                 if (first) {
-                  if (flattenedValue[key].toString() != "") {
+                  if (flattenedValue[key] && flattenedValue[key].toString() != "") {
                     first = false;
                     row +=
                       flattenedValue[key] +
